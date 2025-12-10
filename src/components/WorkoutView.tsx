@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useKV } from '@github/spark/hooks';
+import { usePersistentState } from '@/hooks/use-persistent-state';
 import { WorkoutPlan, WorkoutSession, CompletedSet } from '@/lib/types';
 import { EXERCISE_LIBRARY } from '@/lib/exercises';
 import { Card } from '@/components/ui/card';
@@ -13,9 +13,9 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function WorkoutView() {
-  const [plans] = useKV<WorkoutPlan[]>('workout-plans', []);
-  const [sessions, setSessions] = useKV<WorkoutSession[]>('workout-sessions', []);
-  const [activeSession, setActiveSession] = useKV<WorkoutSession | null>('active-session', null);
+  const [plans] = usePersistentState<WorkoutPlan[]>('workout-plans', []);
+  const [sessions, setSessions] = usePersistentState<WorkoutSession[]>('workout-sessions', []);
+  const [activeSession, setActiveSession] = usePersistentState<WorkoutSession | null>('active-session', null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   const [feedbackQuestion, setFeedbackQuestion] = useState('');

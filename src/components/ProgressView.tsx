@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks';
+import { usePersistentState } from '@/hooks/use-persistent-state';
 import { WorkoutSession } from '@/lib/types';
 import { EXERCISE_LIBRARY } from '@/lib/exercises';
 import { Card } from '@/components/ui/card';
@@ -7,7 +7,7 @@ import { Trophy, TrendUp, CalendarBlank, Fire } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 
 export function ProgressView() {
-  const [sessions] = useKV<WorkoutSession[]>('workout-sessions', []);
+  const [sessions] = usePersistentState<WorkoutSession[]>('workout-sessions', []);
 
   const completedSessions = (sessions || []).filter((s) => s.status === 'completed');
   const totalWorkouts = completedSessions.length;

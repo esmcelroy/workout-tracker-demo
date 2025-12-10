@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useKV } from '@github/spark/hooks';
+import { usePersistentState } from '@/hooks/use-persistent-state';
 import { WorkoutPlan } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
 export function PlansView() {
-  const [plans, setPlans] = useKV<WorkoutPlan[]>('workout-plans', []);
+  const [plans, setPlans] = usePersistentState<WorkoutPlan[]>('workout-plans', []);
   const [editingPlan, setEditingPlan] = useState<WorkoutPlan | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

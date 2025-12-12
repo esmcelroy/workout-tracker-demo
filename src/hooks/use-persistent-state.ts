@@ -7,6 +7,8 @@
  * 
  * Usage:
  *   const [plans, setPlans] = usePersistentState<WorkoutPlan[]>('workout-plans', []);
+ * 
+ * Note: Keys are automatically scoped to the current user when authenticated
  */
 
 import { useState, useCallback, useEffect } from 'react';
@@ -18,6 +20,7 @@ type SetStateAction<T> = T | UpdateFn<T>;
 /**
  * Hook that persists state to a backend API
  * Maintains API compatibility with GitHub Spark's useKV
+ * Automatically scopes keys with user ID when authenticated
  */
 export function usePersistentState<T>(
   key: string,

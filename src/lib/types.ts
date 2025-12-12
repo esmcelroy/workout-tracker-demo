@@ -56,3 +56,13 @@ export interface WorkoutSession {
   }[];
   status: 'in-progress' | 'completed' | 'abandoned';
 }
+
+export interface WorkoutTemplate {
+  id: string;
+  name: string;
+  description: string;
+  goals: string;
+  difficulty: Difficulty;
+  programType: 'strength' | 'hypertrophy' | 'powerlifting' | 'general-fitness';
+  exercises: WorkoutExercise[];
+}

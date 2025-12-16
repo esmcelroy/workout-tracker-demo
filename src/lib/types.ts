@@ -56,3 +56,35 @@ export interface WorkoutSession {
   }[];
   status: 'in-progress' | 'completed' | 'abandoned';
 }
+
+// Authentication Types
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  passwordHash: string;
+  createdAt: number;
+}
+
+export interface UserPublic {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: number;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface SignupRequest {
+  email: string;
+  password: string;
+  name: string;
+}
+
+export interface AuthResponse {
+  user: UserPublic;
+  token: string;
+}

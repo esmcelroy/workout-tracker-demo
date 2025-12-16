@@ -1,5 +1,5 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
-import { UserPublic, LoginRequest, SignupRequest } from '@/lib/types';
+import { UserPublic } from '@/lib/types';
 
 export interface AuthContextType {
   user: UserPublic | null;
@@ -28,12 +28,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const restoreSession = async () => {
       try {
         const savedToken = localStorage.getItem(TOKEN_KEY);
-        const savedUser = localStorage.getItem(USER_KEY);
 
-        if (savedToken && savedUser) {
+        if (savedToken) {
           setToken(savedToken);
-          setUser(JSON.parse(savedUser));
-          // Try to verify token is still valid
+          // Try to verify token is still valid and get user data from backend
           await verifyTokenFn(savedToken);
         }
       } catch (error) {
@@ -49,78 +47,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const verifyTokenFn = useCallback(async (tokenToVerify: string) => {
-    try {
-      const response = await fetch(`${API_BASE}/auth/verify`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${tokenToVerify}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    const response = await fetch(`${API_BASE}/auth/verify`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${tokenToVerify}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-      if (!response.ok) {
-        throw new Error('Token verification failed');
-      }
-
-      const data = await response.json();
-      return data.user;
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error('Token verification failed');
     }
+
+    const data = await response.json();
+    return data.user;
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    try {
-      const response = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
-      }
-
-      const data = await response.json();
-      const { user: newUser, token: newToken } = data;
-
-      setUser(newUser);
-      setToken(newToken);
-      localStorage.setItem(TOKEN_KEY, newToken);
-      localStorage.setItem(USER_KEY, JSON.stringify(newUser));
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Login failed');
     }
+
+    const data = await response.json();
+    const { user: newUser, token: newToken } = data;
+
+    setUser(newUser);
+    setToken(newToken);
+    localStorage.setItem(TOKEN_KEY, newToken);
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
   }, []);
 
   const signup = useCallback(async (email: string, password: string, name: string) => {
-    try {
-      const response = await fetch(`${API_BASE}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, name }),
-      });
+    const response = await fetch(`${API_BASE}/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, name }),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Signup failed');
-      }
-
-      const data = await response.json();
-      const { user: newUser, token: newToken } = data;
-
-      setUser(newUser);
-      setToken(newToken);
-      localStorage.setItem(TOKEN_KEY, newToken);
-      localStorage.setItem(USER_KEY, JSON.stringify(newUser));
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Signup failed');
     }
+
+    const data = await response.json();
+    const { user: newUser, token: newToken } = data;
+
+    setUser(newUser);
+    setToken(newToken);
+    localStorage.setItem(TOKEN_KEY, newToken);
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
   }, []);
 
   const logout = useCallback(() => {
@@ -139,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logout();
       throw error;
     }
-  }, [token, verifyTokenFn]);
+  }, [token, verifyTokenFn, logout]);
 
   const value: AuthContextType = {
     user,

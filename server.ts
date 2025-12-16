@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
+// Note: .js extension required for ES module imports (references compiled output)
 import { PASSWORD_VALIDATION } from './src/lib/validation.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

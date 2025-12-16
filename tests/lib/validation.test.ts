@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PASSWORD_VALIDATION, validatePassword } from '../../src/lib/validation';
+import { PASSWORD_VALIDATION, validatePassword } from '@/lib/validation';
 
 describe('Password Validation', () => {
   describe('PASSWORD_VALIDATION constants', () => {

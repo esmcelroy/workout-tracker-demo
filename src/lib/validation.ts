@@ -1,10 +1,18 @@
 /**
  * Shared validation constants and functions
  * Used by both frontend and backend to ensure consistency
+ * 
+ * NOTE: This file centralizes validation rules to prevent duplication and
+ * maintain consistency between frontend and backend validation logic.
+ * Any changes to validation rules should be made here and will automatically
+ * apply to both frontend and backend.
  */
 
 /**
  * Password validation rules
+ * 
+ * TODO: Consider increasing MIN_LENGTH to 8+ characters for better security
+ * and adding additional requirements (uppercase, lowercase, numbers, special chars)
  */
 export const PASSWORD_VALIDATION = {
   /**

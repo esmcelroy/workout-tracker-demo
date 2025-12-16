@@ -188,8 +188,19 @@ npm run backend         # Alias for dev:backend
 
 ## Testing & Debugging
 
-- **No test framework configured** (Jest, Vitest not in package.json)
+- **Unit tests**: Vitest + Testing Library with jsdom. Config in [vitest.config.ts](../vitest.config.ts); globals and setup in [tests/setup.ts](../tests/setup.ts) (includes `@testing-library/jest-dom`, cleanup, mocks for `fetch`, `localStorage`, and `matchMedia`). Use [tests/test-utils.tsx](../tests/test-utils.tsx) `render()` wrapper for providers.
+- **Run unit tests**: `npm test` (headless), `npm run test:ui` (Vitest UI), `npm run test:coverage` (V8 coverage).
+- **E2E tests**: Playwright configured in [playwright.config.ts](../playwright.config.ts). First run `npx playwright install`. Start the app (`npm run dev`) then run `npm run test:e2e`.
 - **Debugging**: React DevTools + VS Code Debugger (attach to Vite port 5173)
 - **State inspection**: Open browser DevTools → localStorage to view KV data
 - **Network requests**: Check Console for Copilot API calls in getFeedback
+
+### TDD Practices (Required)
+- Write a failing test before implementation (unit or e2e as appropriate).
+- Implement the minimal code to make the test pass; then refactor.
+- Prefer unit tests with Vitest + Testing Library; add E2E with Playwright for flows.
+- Mock network I/O (`fetch`) and `localStorage` where relevant (see [tests/setup.ts](../tests/setup.ts)).
+- Use [tests/test-utils.tsx](../tests/test-utils.tsx) `render()` to include providers.
+- Keep tests deterministic and fast; avoid time-based flakiness.
+- Include tests with feature PRs; do not merge new functionality without coverage.
 

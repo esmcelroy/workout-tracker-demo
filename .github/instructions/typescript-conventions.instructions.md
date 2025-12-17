@@ -1,8 +1,5 @@
 ---
-appliesTo:
-    - "**/*.ts"
-    - "**/*.tsx"
-    - "!**/*.d.ts"
+applyTo: "**/*.ts,**/*.tsx,!**/*.d.ts"
 ---
 
 Note: This instruction file applies only to TypeScript sources (.ts, .tsx).

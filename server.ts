@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
+// Note: .js extension required for ES module imports (references compiled output)
+import { PASSWORD_VALIDATION } from './src/lib/validation.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -211,8 +213,8 @@ app.post('/api/auth/signup', async (req, res) => {
     return res.status(400).json({ success: false, error: 'Missing required fields' });
   }
 
-  if (password.length < 6) {
-    return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
+  if (password.length < PASSWORD_VALIDATION.MIN_LENGTH) {
+    return res.status(400).json({ success: false, error: PASSWORD_VALIDATION.MIN_LENGTH_ERROR });
   }
 
   try {

@@ -5,6 +5,7 @@ import { EXERCISE_LIBRARY } from '@/lib/exercises';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -115,14 +116,14 @@ Provide specific, actionable feedback to help them improve their form. Keep your
     return (
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold tracking-tight">Start a Workout</h2>
+          <h1 className="text-3xl font-bold tracking-tight">Start a Workout</h1>
           <p className="text-muted-foreground mt-1">Choose a plan to begin your training session</p>
         </div>
 
         {(plans || []).length === 0 ? (
           <Card className="p-12 text-center">
-            <Timer size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No workout plans available</h3>
+            <Timer size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" aria-hidden="true" />
+            <h2 className="text-xl font-semibold mb-2">No workout plans available</h2>
             <p className="text-muted-foreground">
               Create a workout plan in the Plans tab before starting a workout
             </p>
@@ -131,7 +132,7 @@ Provide specific, actionable feedback to help them improve their form. Keep your
           <div className="grid gap-4 md:grid-cols-2">
             {(plans || []).map((plan) => (
               <Card key={plan.id} className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <h2 className="text-xl font-semibold mb-2">{plan.name}</h2>
                 <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground mb-4">
                   <span>{plan.exercises.length} exercises</span>
@@ -166,15 +167,15 @@ Provide specific, actionable feedback to help them improve their form. Keep your
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-2xl font-bold">{activeSession.planName}</h2>
-          <Badge variant="secondary">{currentExerciseIndex + 1} / {plan.exercises.length}</Badge>
+          <h1 className="text-2xl font-bold">{activeSession.planName}</h1>
+          <Badge variant="secondary" aria-label={`Exercise ${currentExerciseIndex + 1} of ${plan.exercises.length}`}>{currentExerciseIndex + 1} / {plan.exercises.length}</Badge>
         </div>
-        <Progress value={progressPercent} className="h-2" />
+        <Progress value={progressPercent} className="h-2" aria-label={`${Math.round(progressPercent)}% complete`} />
       </div>
 
       <Card className="p-8 mb-6">
         <div className="mb-6">
-          <h3 className="text-3xl font-bold mb-2">{exerciseData.name}</h3>
+          <h2 className="text-3xl font-bold mb-2">{exerciseData.name}</h2>
           <div className="flex flex-wrap gap-2">
             <Badge className="capitalize">{exerciseData.muscleGroup}</Badge>
             <Badge variant="outline" className="capitalize">{exerciseData.difficulty}</Badge>
@@ -182,7 +183,7 @@ Provide specific, actionable feedback to help them improve their form. Keep your
         </div>
 
         <div className="mb-6">
-          <h4 className="font-semibold mb-2">Target</h4>
+          <h3 className="font-semibold mb-2">Target</h3>
           <div className="flex gap-6 text-lg">
             <span>{currentPlanExercise.sets} sets</span>
             <span>×</span>
@@ -192,11 +193,11 @@ Provide specific, actionable feedback to help them improve their form. Keep your
         </div>
 
         <div className="mb-6">
-          <h4 className="font-semibold mb-3">Form Cues</h4>
+          <h3 className="font-semibold mb-3">Form Cues</h3>
           <ul className="space-y-2">
             {exerciseData.formCues.map((cue, i) => (
               <li key={i} className="flex gap-2 text-sm">
-                <CheckCircle size={18} weight="fill" className="text-accent flex-shrink-0 mt-0.5" />
+                <CheckCircle size={18} weight="fill" className="text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
                 <span>{cue}</span>
               </li>
             ))}
@@ -323,8 +324,11 @@ function SetTracker({
           <h4 className="font-semibold">Set {currentSet}</h4>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Reps</label>
+              <Label htmlFor={`reps-input-${currentSet}`} className="text-sm text-muted-foreground mb-1 block">
+                Reps
+              </Label>
               <Input
+                id={`reps-input-${currentSet}`}
                 type="number"
                 value={reps}
                 onChange={(e) => setReps(parseInt(e.target.value) || 0)}
@@ -332,8 +336,11 @@ function SetTracker({
               />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Weight (lbs)</label>
+              <Label htmlFor={`weight-input-${currentSet}`} className="text-sm text-muted-foreground mb-1 block">
+                Weight (lbs)
+              </Label>
               <Input
+                id={`weight-input-${currentSet}`}
                 type="number"
                 value={weight}
                 onChange={(e) => setWeight(parseInt(e.target.value) || 0)}

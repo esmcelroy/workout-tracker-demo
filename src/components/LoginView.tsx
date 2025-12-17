@@ -59,6 +59,7 @@ export function LoginView({ onSwitchToSignup }: LoginViewProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="email"
               />
             </div>
 
@@ -72,6 +73,7 @@ export function LoginView({ onSwitchToSignup }: LoginViewProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
 

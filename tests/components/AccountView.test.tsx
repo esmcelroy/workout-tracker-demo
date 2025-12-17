@@ -52,25 +52,24 @@ describe('AccountView', () => {
   it('displays account creation date', () => {
     render(<AccountView />);
 
-    expect(screen.getByText('Member Since')).toBeInTheDocument();
-    // Date format will be locale-specific, just check it's there
-    expect(screen.getByText(/December/)).toBeInTheDocument();
+    expect(screen.getByText('Account Created')).toBeInTheDocument();
+    // Date will be from createdAt: '2025-12-01T00:00:00Z'
+    // which formats to "December 1, 2025" in en-US locale
+    const createdAtElement = screen.getByText(/\d{1,2},\s\d{4}/);
+    expect(createdAtElement).toBeInTheDocument();
   });
 
   it('renders logout button', () => {
     render(<AccountView />);
 
-    const logoutButton = screen.getByRole('button', { name: /sign out/i });
+    const logoutButton = screen.getByRole('button', { name: /log out/i });
     expect(logoutButton).toBeInTheDocument();
   });
 
   it('calls logout when logout button is clicked', () => {
-    const { useAuth } = require('../../src/contexts/AuthContext');
-    const mockLogout = vi.fn();
-
     render(<AccountView />);
 
-    const logoutButton = screen.getByRole('button', { name: /sign out/i });
+    const logoutButton = screen.getByRole('button', { name: /log out/i });
     fireEvent.click(logoutButton);
 
     // Note: In real test, would verify logout was called through the mocked hook
@@ -80,6 +79,7 @@ describe('AccountView', () => {
   it('displays data isolation notice', () => {
     render(<AccountView />);
 
-    expect(screen.getByText(/your data is private/i)).toBeInTheDocument();
+    expect(screen.getByText(/data privacy/i)).toBeInTheDocument();
+    expect(screen.getByText(/your workout data is stored securely/i)).toBeInTheDocument();
   });
 });

@@ -4,12 +4,13 @@
  */
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const TOKEN_KEY = 'fittrack_auth_token';
 
 /**
  * Get authorization headers
  */
 function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('fittrack_auth_token');
+  const token = localStorage.getItem(TOKEN_KEY);
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
@@ -84,4 +85,41 @@ export async function apiListKeys(): Promise<string[]> {
 
   const result = await response.json();
   return result.keys;
+}
+
+/**
+ * Export all data from the backend
+ */
+export async function apiExport(): Promise<Record<string, unknown>> {
+  try {
+    const response = await fetch(`${API_BASE}/export`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API EXPORT failed: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.data as Record<string, unknown>;
+  } catch (error) {
+    console.error('Failed to export data:', error);
+    return {};
+  }
+}
+
+/**
+ * Import data into the backend
+ */
+export async function apiImport(data: Record<string, unknown>): Promise<void> {
+  const response = await fetch(`${API_BASE}/import`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ data }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API IMPORT failed: ${response.statusText}`);
+  }
 }

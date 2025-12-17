@@ -33,12 +33,10 @@ export function usePersistentState<T>(
   }
 ): [T, (value: SetStateAction<T>) => void] {
   const [state, setState] = useState<T>(defaultValue);
-  const [isLoading, setIsLoading] = useState(!options?.skipLoad);
 
   // Load initial data from API
   useEffect(() => {
     if (options?.skipLoad) {
-      setIsLoading(false);
       return;
     }
 
@@ -55,10 +53,6 @@ export function usePersistentState<T>(
         if (isMounted) {
           // Fall back to default value on error
           setState(defaultValue);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
         }
       }
     };

@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Warning } from '@phosphor-icons/react';
 import { useAuth } from '@/contexts/AuthContext';
+import { PASSWORD_VALIDATION } from '@/lib/validation';
 
 interface SignupViewProps {
   onSwitchToLogin: () => void;
@@ -29,8 +30,8 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < PASSWORD_VALIDATION.MIN_LENGTH) {
+      setError(PASSWORD_VALIDATION.MIN_LENGTH_ERROR);
       return;
     }
 
@@ -72,6 +73,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setName(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="name"
               />
             </div>
 
@@ -85,6 +87,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="email"
               />
             </div>
 
@@ -98,6 +101,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="new-password"
               />
             </div>
 
@@ -111,6 +115,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="new-password"
               />
             </div>
 

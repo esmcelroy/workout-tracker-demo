@@ -95,7 +95,6 @@ export function PlanEditor({ plan, onSave, onCancel }: PlanEditorProps) {
 
         <div className="space-y-3">
           {exercises.map((exercise, index) => {
-            const exerciseData = EXERCISE_LIBRARY.find((e) => e.id === exercise.exerciseId);
             return (
               <Card key={index} className="p-4">
                 <div className="space-y-3">

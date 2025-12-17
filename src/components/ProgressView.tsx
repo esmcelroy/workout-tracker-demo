@@ -23,7 +23,7 @@ export function ProgressView() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">Progress</h2>
+        <h1 className="text-3xl font-bold tracking-tight">Progress</h1>
         <p className="text-muted-foreground mt-1">Track your fitness journey and achievements</p>
       </div>
 
@@ -31,7 +31,7 @@ export function ProgressView() {
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-accent/10">
-              <Trophy size={24} weight="fill" className="text-accent" />
+              <Trophy size={24} weight="fill" className="text-accent" aria-hidden="true" />
             </div>
             <div>
               <div className="text-3xl font-bold">{totalWorkouts}</div>
@@ -43,7 +43,7 @@ export function ProgressView() {
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-primary/10">
-              <Fire size={24} weight="fill" className="text-primary" />
+              <Fire size={24} weight="fill" className="text-primary" aria-hidden="true" />
             </div>
             <div>
               <div className="text-3xl font-bold">{totalSets}</div>
@@ -55,7 +55,7 @@ export function ProgressView() {
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-secondary/10">
-              <CalendarBlank size={24} weight="fill" className="text-secondary" />
+              <CalendarBlank size={24} weight="fill" className="text-secondary" aria-hidden="true" />
             </div>
             <div>
               <div className="text-3xl font-bold">
@@ -70,11 +70,11 @@ export function ProgressView() {
       </div>
 
       <div>
-        <h3 className="text-xl font-semibold mb-4">Workout History</h3>
+        <h2 className="text-xl font-semibold mb-4">Workout History</h2>
         {recentSessions.length === 0 ? (
           <Card className="p-12 text-center">
-            <TrendUp size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" />
-            <h4 className="text-xl font-semibold mb-2">No completed workouts yet</h4>
+            <TrendUp size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" aria-hidden="true" />
+            <h3 className="text-xl font-semibold mb-2">No completed workouts yet</h3>
             <p className="text-muted-foreground">
               Complete your first workout to see your progress here
             </p>
@@ -87,38 +87,40 @@ export function ProgressView() {
                 : 0;
 
               return (
-                <Card key={session.id} className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h4 className="text-lg font-semibold">{session.planName}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {format(session.startedAt, 'MMM d, yyyy • h:mm a')}
-                      </p>
+                <article key={session.id}>
+                  <Card className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-semibold">{session.planName}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {format(session.startedAt, 'MMM d, yyyy • h:mm a')}
+                        </p>
+                      </div>
+                      <Badge variant="secondary">{duration} min</Badge>
                     </div>
-                    <Badge variant="secondary">{duration} min</Badge>
-                  </div>
 
-                  <div className="space-y-2">
-                    {session.exercises.map((exercise) => {
-                      const exerciseData = EXERCISE_LIBRARY.find((e) => e.id === exercise.exerciseId);
-                      return (
-                        <div key={exercise.exerciseId} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{exercise.exerciseName}</span>
-                            {exerciseData && (
-                              <Badge variant="outline" className="text-xs capitalize">
-                                {exerciseData.muscleGroup}
-                              </Badge>
-                            )}
-                          </div>
-                          <span className="text-muted-foreground">
-                            {exercise.completedSets.length} sets
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
+                    <ul className="space-y-2">
+                      {session.exercises.map((exercise) => {
+                        const exerciseData = EXERCISE_LIBRARY.find((e) => e.id === exercise.exerciseId);
+                        return (
+                          <li key={exercise.exerciseId} className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{exercise.exerciseName}</span>
+                              {exerciseData && (
+                                <Badge variant="outline" className="text-xs capitalize">
+                                  {exerciseData.muscleGroup}
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="text-muted-foreground">
+                              {exercise.completedSets.length} sets
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </Card>
+                </article>
               );
             })}
           </div>

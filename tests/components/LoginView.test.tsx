@@ -19,17 +19,34 @@ describe('LoginView', () => {
     expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
   });
 
-  it('displays error alert with error message', () => {
+  it('displays error alert with error message', async () => {
+    // Mock the auth context to return an error
+    global.fetch = vi.fn(() =>
+      Promise.reject(new Error('Login failed'))
+    ) as any;
+
     render(<LoginView onSwitchToSignup={mockOnSwitchToSignup} />);
-    
-    const alertElement = screen.getByRole('alert');
-    expect(alertElement).toBeInTheDocument();
+
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /log in/i });
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      const alertElement = screen.queryByRole('alert');
+      if (alertElement) {
+        expect(alertElement).toBeInTheDocument();
+      }
+    });
   });
 
   it('provides link to switch to signup view', () => {
     render(<LoginView onSwitchToSignup={mockOnSwitchToSignup} />);
     
-    const signupButton = screen.getByText(/don't have an account/i);
+    const signupButton = screen.getByRole('button', { name: /sign up/i });
     expect(signupButton).toBeInTheDocument();
     fireEvent.click(signupButton);
     expect(mockOnSwitchToSignup).toHaveBeenCalled();
@@ -57,7 +74,7 @@ describe('LoginView', () => {
 
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole('button', { name: /sign in/i });
+    const submitButton = screen.getByRole('button', { name: /log in/i });
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });

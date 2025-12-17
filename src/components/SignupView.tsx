@@ -72,6 +72,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setName(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="name"
               />
             </div>
 
@@ -85,6 +86,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="email"
               />
             </div>
 
@@ -98,6 +100,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="new-password"
               />
             </div>
 
@@ -111,6 +114,7 @@ export function SignupView({ onSwitchToLogin }: SignupViewProps) {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="new-password"
               />
             </div>
 

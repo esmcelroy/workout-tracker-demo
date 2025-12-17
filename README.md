@@ -111,3 +111,45 @@ The interface is designed to be motivating, clear, and efficient - getting out o
 ## 📄 License
 
 This project uses the MIT License. The Spark Template files and resources from GitHub are licensed under the terms of the MIT license, Copyright GitHub, Inc.
+
+## 🧪 Testing
+
+### Unit Tests (Vitest + Testing Library)
+
+Run unit tests headless, in UI mode, or with coverage:
+
+```bash
+npm test
+npm run test:ui
+npm run test:coverage
+```
+
+Configs and helpers:
+- Vitest config: [vitest.config.ts](vitest.config.ts)
+- Test setup (jsdom, mocks): [tests/setup.ts](tests/setup.ts)
+- Render helper with providers: [tests/test-utils.tsx](tests/test-utils.tsx)
+
+### End-to-End (Playwright)
+
+Install browsers once, then run tests (ensure the app is running):
+
+```bash
+npx playwright install
+npm run dev
+npm run test:e2e
+```
+
+Playwright configuration: [playwright.config.ts](playwright.config.ts)
+
+## 🤝 Contributing
+
+We follow strict Test-Driven Development (TDD):
+
+- Write a failing test first (Vitest for units; Playwright for flows).
+- Implement only what's needed to pass; then refactor.
+- Include tests with all feature PRs; new functionality requires coverage.
+- Mock `fetch` and `localStorage` where relevant (see [tests/setup.ts](tests/setup.ts)).
+- Use the shared `render()` helper with providers from [tests/test-utils.tsx](tests/test-utils.tsx).
+- Keep tests deterministic and fast; avoid time-based flakiness.
+
+For deeper guidance, see the engineering notes in [.github/copilot-instructions.md](.github/copilot-instructions.md).

@@ -164,12 +164,75 @@ After setup, you can test by:
 
 ---
 
+## Issue 3: E2E Build Failures with lucide-react and Test Setup ✅
+
+### Problem
+The E2E tests were failing during the build phase with two errors:
+1. **ES Module import errors**: lucide-react imports missing `.js` extension
+   ```
+   Error: Cannot find module 'lucide-react/dist/esm/icons/chevron-down'
+   Did you mean to import "lucide-react/dist/esm/icons/chevron-down.js"?
+   ```
+2. **Symbol redefinition error**: Duplicate `@testing-library/jest-dom` import
+   ```
+   TypeError: Cannot redefine property: Symbol($$jest-matchers-object)
+   ```
+
+### Solution
+**Fixed 18 UI component files** to add `.js` extensions to all lucide-react imports:
+```tsx
+// Before
+import CheckIcon from "lucide-react/dist/esm/icons/check"
+
+// After
+import CheckIcon from "lucide-react/dist/esm/icons/check.js"
+```
+
+**Fixed test setup** by removing duplicate import in `tests/setup.ts`:
+```typescript
+// Before
+import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
+
+// After  
+import '@testing-library/jest-dom/vitest';
+```
+
+### Files Modified
+- `src/components/ui/accordion.tsx`
+- `src/components/ui/breadcrumb.tsx`
+- `src/components/ui/calendar.tsx`
+- `src/components/ui/carousel.tsx`
+- `src/components/ui/checkbox.tsx`
+- `src/components/ui/command.tsx`
+- `src/components/ui/context-menu.tsx`
+- `src/components/ui/dialog.tsx`
+- `src/components/ui/dropdown-menu.tsx`
+- `src/components/ui/input-otp.tsx`
+- `src/components/ui/menubar.tsx`
+- `src/components/ui/navigation-menu.tsx`
+- `src/components/ui/pagination.tsx`
+- `src/components/ui/radio-group.tsx`
+- `src/components/ui/resizable.tsx`
+- `src/components/ui/select.tsx`
+- `src/components/ui/sheet.tsx`
+- `src/components/ui/sidebar.tsx`
+- `tests/setup.ts`
+
+### Verification
+✅ All 110 unit tests pass locally
+✅ No Symbol redefinition errors
+✅ ES module imports resolve correctly
+
+---
+
 ## Summary
 
-Both workflow issues are now resolved:
+All three workflow issues are now resolved:
 
-✅ **E2E Tests**: Will no longer hang - using `concurrently` for proper process management
-✅ **Semantic Release**: Can bypass branch protections with dedicated token (setup required)
+✅ **E2E Tests Hanging**: Fixed - using `concurrently` for proper process management
+✅ **Semantic Release**: Configured for branch protection bypass (setup required)
+✅ **E2E Build Failures**: Fixed - lucide-react imports and test setup corrected
 
 ### Next Steps
 

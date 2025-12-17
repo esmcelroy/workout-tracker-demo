@@ -204,3 +204,6 @@ npm run backend         # Alias for dev:backend
 - Keep tests deterministic and fast; avoid time-based flakiness.
 - Include tests with feature PRs; do not merge new functionality without coverage.
 
+### Coding conventions
+
+When creating new typescript files (`.ts`, `.tsx`), reference the typescript conventions file in `.github/instructions/typescript-conventions.instructions.md`.

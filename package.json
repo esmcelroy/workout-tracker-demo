@@ -5,7 +5,7 @@
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "https://github.com/YOUR_USERNAME/workout-tracker-demo.git"
+        "url": "https://github.com/esmcelroy/workout-tracker-demo.git"
     },
     "scripts": {
         "dev": "concurrently \"npm run backend\" \"vite\"",
@@ -137,10 +137,5 @@
         "conventional-changelog-conventionalcommits": "^8.0.0",
         "semantic-release": "^24.0.0",
         "wait-on": "^8.0.1"
-    },
-    "workspaces": {
-        "packages": [
-            "packages/*"
-        ]
     }
 }

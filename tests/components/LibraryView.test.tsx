@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, within, waitFor } from '../test-utils';
+import { render, screen, waitFor } from '../test-utils';
 import { LibraryView } from '@/components/LibraryView';
 import userEvent from '@testing-library/user-event';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { EXERCISE_LIBRARY } from '@/lib/exercises';
-import { Exercise, MuscleGroup } from '@/lib/types';
+import { MuscleGroup } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

@@ -26,10 +26,17 @@ if (!existsSync(dataDir)) {
 
 const usersFilePath = join(dataDir, 'users.json');
 
+interface User {
+  id: string;
+  email: string;
+  password: string;
+  createdAt: number;
+}
+
 /**
  * Load users from JSON file
  */
-function loadUsers(): Record<string, any> {
+function loadUsers(): Record<string, User> {
   try {
     if (existsSync(usersFilePath)) {
       return JSON.parse(readFileSync(usersFilePath, 'utf-8'));
@@ -43,7 +50,7 @@ function loadUsers(): Record<string, any> {
 /**
  * Save users to JSON file
  */
-function saveUsers(users: Record<string, any>): void {
+function saveUsers(users: Record<string, User>): void {
   try {
     const tempPath = `${usersFilePath}.tmp`;
     writeFileSync(tempPath, JSON.stringify(users, null, 2), 'utf-8');
@@ -57,15 +64,15 @@ function saveUsers(users: Record<string, any>): void {
 /**
  * Find user by email
  */
-function findUserByEmail(email: string): any {
+function findUserByEmail(email: string): User | undefined {
   const users = loadUsers();
-  return Object.values(users).find((u: any) => u.email === email.toLowerCase());
+  return Object.values(users).find((u) => u.email === email.toLowerCase());
 }
 
 /**
  * Find user by ID
  */
-function findUserById(id: string): any {
+function findUserById(id: string): User | undefined {
   const users = loadUsers();
   return users[id];
 }
@@ -73,7 +80,7 @@ function findUserById(id: string): any {
 /**
  * JWT verification middleware
  */
-function verifyToken(req: any, res: any, next: any): void {
+function verifyToken(req: express.Request, res: express.Response, next: express.NextFunction): void {
   const authHeader = req.headers.authorization;
   const token = authHeader?.replace('Bearer ', '');
 
@@ -82,10 +89,10 @@ function verifyToken(req: any, res: any, next: any): void {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
     req.userId = decoded.userId;
     next();
-  } catch (error) {
+  } catch (_error) {
     res.status(401).json({ success: false, error: 'Invalid or expired token' });
   }
 }

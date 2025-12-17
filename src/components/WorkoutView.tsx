@@ -6,16 +6,15 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Circle, Lightning, Timer, Trophy } from '@phosphor-icons/react';
+import { CheckCircle, Lightning, Timer, Trophy } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function WorkoutView() {
   const [plans] = usePersistentState<WorkoutPlan[]>('workout-plans', []);
-  const [sessions, setSessions] = usePersistentState<WorkoutSession[]>('workout-sessions', []);
+  const [, setSessions] = usePersistentState<WorkoutSession[]>('workout-sessions', []);
   const [activeSession, setActiveSession] = usePersistentState<WorkoutSession | null>('active-session', null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
@@ -104,7 +103,7 @@ Provide specific, actionable feedback to help them improve their form. Keep your
 
       const response = await window.spark.llm(promptText, 'gpt-4o-mini', false);
       setFeedbackResponse(response);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to get feedback. Try again.');
       setFeedbackResponse(exercise.formCues.join('\n\n'));
     } finally {

@@ -1,120 +1,106 @@
 /**
  * API Service Layer
- * 
- * Fetch-based HTTP client for backend communication.
- * Provides generic functions for CRUD operations.
+ * Generic fetch-based client for backend communication
  */
 
-// Get the API base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const TOKEN_KEY = 'fittrack_auth_token';
 
 /**
- * Retrieve data for a key from the backend
- * @param key - The storage key to retrieve
- * @returns The data for the key, or null if not found
+ * Get authorization headers
+ */
+function getAuthHeaders(): HeadersInit {
+  const token = localStorage.getItem(TOKEN_KEY);
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+/**
+ * Retrieve data for a key
  */
 export async function apiGet<T>(key: string): Promise<T | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/data/${key}`);
-    
+  const response = await fetch(`${API_BASE}/data/${key}`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
     if (response.status === 404) {
-      // Key doesn't exist, return null
       return null;
     }
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    return result.data as T;
-  } catch (error) {
-    console.error(`Failed to get ${key}:`, error);
-    return null;
+    throw new Error(`API GET failed: ${response.statusText}`);
   }
+
+  const result = await response.json();
+  return result.data as T;
 }
 
 /**
- * Store or update data for a key in the backend
- * @param key - The storage key to set
- * @param value - The data to store
- * @returns The stored data
+ * Store/update data for a key
  */
-export async function apiSet<T>(key: string, value: T): Promise<T> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/data/${key}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ data: value }),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    return result.data as T;
-  } catch (error) {
-    console.error(`Failed to set ${key}:`, error);
-    throw error;
+export async function apiSet<T>(key: string, data: T): Promise<T> {
+  const response = await fetch(`${API_BASE}/data/${key}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ data }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API SET failed: ${response.statusText}`);
   }
+
+  const result = await response.json();
+  return result.data as T;
 }
 
 /**
- * Delete data for a key from the backend
- * @param key - The storage key to delete
+ * Delete data for a key
  */
 export async function apiDelete(key: string): Promise<void> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/data/${key}`, {
-      method: 'DELETE',
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-  } catch (error) {
-    console.error(`Failed to delete ${key}:`, error);
-    throw error;
+  const response = await fetch(`${API_BASE}/data/${key}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API DELETE failed: ${response.statusText}`);
   }
 }
 
 /**
- * List all keys stored in the backend
- * @returns Array of all storage keys
+ * List all keys
  */
 export async function apiListKeys(): Promise<string[]> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/keys`);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    return result.keys as string[];
-  } catch (error) {
-    console.error('Failed to list keys:', error);
-    return [];
+  const response = await fetch(`${API_BASE}/keys`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API LIST failed: ${response.statusText}`);
   }
+
+  const result = await response.json();
+  return result.keys;
 }
 
 /**
  * Export all data from the backend
- * @returns All data as a JSON object
  */
 export async function apiExport(): Promise<Record<string, unknown>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/export`, {
+    const response = await fetch(`${API_BASE}/export`, {
       method: 'POST',
+      headers: getAuthHeaders(),
     });
-    
+
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(`API EXPORT failed: ${response.statusText}`);
     }
-    
+
     const result = await response.json();
     return result.data as Record<string, unknown>;
   } catch (error) {
@@ -125,23 +111,15 @@ export async function apiExport(): Promise<Record<string, unknown>> {
 
 /**
  * Import data into the backend
- * @param data - Data to import as a JSON object
  */
 export async function apiImport(data: Record<string, unknown>): Promise<void> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/import`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ data }),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-  } catch (error) {
-    console.error('Failed to import data:', error);
-    throw error;
+  const response = await fetch(`${API_BASE}/import`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ data }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API IMPORT failed: ${response.statusText}`);
   }
 }

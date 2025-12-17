@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '../test-utils';
 import { axe } from 'jest-axe';
 import { WorkoutView } from '@/components/WorkoutView';
 import type { WorkoutPlan, WorkoutSession, WorkoutExercise } from '@/lib/types';
-import userEvent from '@testing-library/user-event';
 
 // Mock the window.spark.llm function
 vi.stubGlobal('spark', {
@@ -11,7 +10,7 @@ vi.stubGlobal('spark', {
 });
 
 // Helper function to create mock exercise session data
-const createMockExerciseSession = (exerciseId: string, exerciseName: string, sets: number = 0) => ({
+const _createMockExerciseSession = (exerciseId: string, exerciseName: string, sets: number = 0) => ({
   exerciseId,
   exerciseName,
   completedSets: Array.from({ length: sets }, (_, i) => ({

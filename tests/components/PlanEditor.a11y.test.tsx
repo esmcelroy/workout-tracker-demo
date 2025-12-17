@@ -83,7 +83,6 @@ describe('PlanEditor - Accessibility', () => {
   });
 
   it('should have remove button with accessible name', async () => {
-    const user = userEvent.setup();
     render(<PlanEditor plan={mockPlan} onSave={mockOnSave} onCancel={mockOnCancel} />);
     
     // Find the remove button (Trash icon button)
@@ -126,7 +125,6 @@ describe('PlanEditor - Accessibility', () => {
   });
 
   it('should have proper number input constraints', async () => {
-    const user = userEvent.setup();
     render(<PlanEditor plan={mockPlan} onSave={mockOnSave} onCancel={mockOnCancel} />);
     
     const setsInput = screen.getByLabelText('Sets') as HTMLInputElement;

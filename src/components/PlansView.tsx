@@ -46,7 +46,7 @@ export function PlansView() {
     toast.success('Plan deleted');
   };
 
-  const handleStartWorkout = (plan: WorkoutPlan) => {
+  const handleStartWorkout = (_plan: WorkoutPlan) => {
     toast.info('Starting workout - switch to Workout tab');
   };
 

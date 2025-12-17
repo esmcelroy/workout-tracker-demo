@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '../test-utils';
+import { render, screen } from '../test-utils';
 import { axe } from 'jest-axe';
 import { ProgressView } from '@/components/ProgressView';
 import type { WorkoutSession } from '@/lib/types';

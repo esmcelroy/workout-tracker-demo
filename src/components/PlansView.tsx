@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { usePersistentState } from '@/hooks/use-persistent-state';
-import { WorkoutPlan } from '@/lib/types';
+import { WorkoutPlan, WorkoutTemplate } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Pencil, Trash, Play, Barbell } from '@phosphor-icons/react';
+import { Plus, Pencil, Trash, Play, Barbell, Books } from '@phosphor-icons/react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { PlanEditor } from '@/components/PlanEditor';
+import { TemplateLibrary } from '@/components/TemplateLibrary';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -13,6 +14,7 @@ export function PlansView() {
   const [plans, setPlans] = usePersistentState<WorkoutPlan[]>('workout-plans', []);
   const [editingPlan, setEditingPlan] = useState<WorkoutPlan | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
 
   const handleCreatePlan = () => {
     setEditingPlan(null);
@@ -48,6 +50,20 @@ export function PlansView() {
     toast.info('Starting workout - switch to Workout tab');
   };
 
+  const handleImportTemplate = (template: WorkoutTemplate) => {
+    const newPlan: WorkoutPlan = {
+      id: `plan-${Date.now()}`,
+      name: template.name,
+      description: template.description,
+      exercises: template.exercises,
+      createdAt: Date.now()
+    };
+    
+    setPlans((currentPlans) => [...(currentPlans || []), newPlan]);
+    setIsTemplateDialogOpen(false);
+    toast.success(`"${template.name}" imported successfully!`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -55,20 +71,36 @@ export function PlansView() {
           <h1 className="text-3xl font-bold tracking-tight">Workout Plans</h1>
           <p className="text-muted-foreground mt-1">Create and manage your training programs</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleCreatePlan} className="gap-2">
-              <Plus size={20} weight="bold" />
-              New Plan
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingPlan ? 'Edit Plan' : 'Create New Plan'}</DialogTitle>
-            </DialogHeader>
-            <PlanEditor plan={editingPlan} onSave={handleSavePlan} onCancel={() => setIsDialogOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Dialog open={isTemplateDialogOpen} onOpenChange={setIsTemplateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Books size={20} weight="bold" />
+                Browse Templates
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Workout Templates</DialogTitle>
+              </DialogHeader>
+              <TemplateLibrary onImport={handleImportTemplate} />
+            </DialogContent>
+          </Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleCreatePlan} className="gap-2">
+                <Plus size={20} weight="bold" />
+                New Plan
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{editingPlan ? 'Edit Plan' : 'Create New Plan'}</DialogTitle>
+              </DialogHeader>
+              <PlanEditor plan={editingPlan} onSave={handleSavePlan} onCancel={() => setIsDialogOpen(false)} />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {(plans || []).length === 0 ? (
@@ -76,12 +108,18 @@ export function PlansView() {
           <Barbell size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" aria-hidden="true" />
           <h2 className="text-xl font-semibold mb-2">No workout plans yet</h2>
           <p className="text-muted-foreground mb-6">
-            Create your first workout plan to start tracking your fitness journey
+            Create your first workout plan or import a pre-built template
           </p>
-          <Button onClick={handleCreatePlan} className="gap-2">
-            <Plus size={20} weight="bold" />
-            Create Your First Plan
-          </Button>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={handleCreatePlan} className="gap-2">
+              <Plus size={20} weight="bold" />
+              Create Your First Plan
+            </Button>
+            <Button onClick={() => setIsTemplateDialogOpen(true)} variant="outline" className="gap-2">
+              <Books size={20} weight="bold" />
+              Browse Templates
+            </Button>
+          </div>
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">

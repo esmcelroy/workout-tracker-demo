@@ -68,7 +68,7 @@ export function PlansView() {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Workout Plans</h2>
+          <h1 className="text-3xl font-bold tracking-tight">Workout Plans</h1>
           <p className="text-muted-foreground mt-1">Create and manage your training programs</p>
         </div>
         <div className="flex gap-2">
@@ -105,8 +105,8 @@ export function PlansView() {
 
       {(plans || []).length === 0 ? (
         <Card className="p-12 text-center">
-          <Barbell size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold mb-2">No workout plans yet</h3>
+          <Barbell size={64} weight="thin" className="mx-auto text-muted-foreground mb-4" aria-hidden="true" />
+          <h2 className="text-xl font-semibold mb-2">No workout plans yet</h2>
           <p className="text-muted-foreground mb-6">
             Create your first workout plan or import a pre-built template
           </p>
@@ -133,7 +133,7 @@ export function PlansView() {
               <Card className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-1">{plan.name}</h3>
+                    <h2 className="text-xl font-semibold mb-1">{plan.name}</h2>
                     <p className="text-sm text-muted-foreground">{plan.description}</p>
                   </div>
                 </div>
@@ -146,14 +146,14 @@ export function PlansView() {
 
                 <div className="flex gap-2">
                   <Button onClick={() => handleStartWorkout(plan)} className="flex-1 gap-2 bg-accent hover:bg-accent/90 text-accent-foreground">
-                    <Play size={18} weight="fill" />
+                    <Play size={18} weight="fill" aria-hidden="true" />
                     Start Workout
                   </Button>
-                  <Button onClick={() => handleEditPlan(plan)} variant="outline" size="icon">
-                    <Pencil size={18} />
+                  <Button onClick={() => handleEditPlan(plan)} variant="outline" size="icon" aria-label={`Edit ${plan.name} plan`}>
+                    <Pencil size={18} aria-hidden="true" />
                   </Button>
-                  <Button onClick={() => handleDeletePlan(plan.id)} variant="outline" size="icon">
-                    <Trash size={18} />
+                  <Button onClick={() => handleDeletePlan(plan.id)} variant="outline" size="icon" aria-label={`Delete ${plan.name} plan`}>
+                    <Trash size={18} aria-hidden="true" />
                   </Button>
                 </div>
               </Card>

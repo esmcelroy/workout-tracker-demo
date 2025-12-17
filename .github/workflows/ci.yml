@@ -131,25 +131,23 @@ jobs:
       - name: Create .data directory
         run: mkdir -p .data
 
-      - name: Start backend server
+      - name: Start servers with concurrently
         run: |
-          npm run backend &
-          echo $! > backend.pid
-        env:
-          PORT: 3000
-          JWT_SECRET: ${{ secrets.JWT_SECRET || 'test-jwt-secret-for-ci-only' }}
-          NODE_ENV: test
-
-      - name: Start frontend server
-        run: |
-          npm run dev:frontend &
-          echo $! > frontend.pid
-        env:
-          VITE_API_URL: http://localhost:3000
-
-      - name: Wait for servers to be ready
-        run: |
-          npx wait-on http://localhost:3000 http://localhost:5173 --timeout 60000
+          # Start both servers in background with concurrently for proper environment context
+          npx concurrently -k -s first \
+            "PORT=3000 JWT_SECRET=${{ secrets.JWT_SECRET || 'test-jwt-secret-for-ci-only' }} NODE_ENV=test npm run backend" \
+            "VITE_API_URL=http://localhost:3000 npm run dev:frontend" \
+            "npx wait-on http://localhost:3000 http://localhost:5173 -t 60000 && echo 'Servers ready' && exit 0" &
+          
+          CONCURRENTLY_PID=$!
+          echo $CONCURRENTLY_PID > servers.pid
+          
+          # Wait for wait-on to succeed (it will exit when both servers respond)
+          timeout 65 bash -c 'while kill -0 '"$CONCURRENTLY_PID"' 2>/dev/null; do sleep 1; done' || true
+          
+          # Verify servers are actually running
+          curl -f http://localhost:3000/api/health || echo "Backend health check failed"
+          curl -f http://localhost:5173 || echo "Frontend health check failed"
 
       - name: Run E2E tests
         run: npm run test:e2e
@@ -177,5 +175,12 @@ jobs:
       - name: Stop servers
         if: always()
         run: |
-          if [ -f backend.pid ]; then kill $(cat backend.pid) || true; fi
-          if [ -f frontend.pid ]; then kill $(cat frontend.pid) || true; fi
+          if [ -f servers.pid ]; then 
+            # Kill the concurrently process group
+            kill -TERM -$(cat servers.pid) 2>/dev/null || true
+            sleep 2
+            kill -KILL -$(cat servers.pid) 2>/dev/null || true
+          fi
+          # Fallback: kill any remaining node processes on these ports
+          lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+          lsof -ti:5173 | xargs kill -9 2>/dev/null || true

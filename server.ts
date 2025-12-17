@@ -245,7 +245,7 @@ app.post('/api/auth/signup', async (req, res) => {
         id: userId,
         email: email.toLowerCase(),
         name,
-        createdAt: Date.now(),
+        createdAt: users[userId].createdAt,
       },
       token,
     });

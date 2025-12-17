@@ -15,11 +15,11 @@ This backlog captures planned features, enhancements, and technical improvements
 **Description**: Add user accounts so multiple users can track their own workout data separately. Currently all data is shared in a single JSON store.
 
 **Acceptance Criteria**:
-- [ ] User registration with email/password
-- [ ] User login/logout functionality
-- [ ] User-scoped data isolation (each user sees only their plans/sessions)
-- [ ] Password reset flow
-- [ ] Session management with JWT or similar
+- [x] User registration with email/password
+- [x] User login/logout functionality
+- [x] User-scoped data isolation (each user sees only their plans/sessions)
+- [x] Password reset flow
+- [x] Session management with JWT or similar
 
 **Technical Notes**:
 - Consider OAuth providers (Google, GitHub) for easier onboarding

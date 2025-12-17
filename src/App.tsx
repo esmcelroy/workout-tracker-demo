@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Toaster } from '@/components/ui/sonner';
-import { Barbell, Play, TrendUp, BookOpen, SignOut } from '@phosphor-icons/react';
+import { Barbell, Play, TrendUp, BookOpen, SignOut, User } from '@phosphor-icons/react';
 import { PlansView } from '@/components/PlansView';
 import { WorkoutView } from '@/components/WorkoutView';
 import { ProgressView } from '@/components/ProgressView';
@@ -98,6 +98,7 @@ function App() {
                 <span>Library</span>
               </TabsTrigger>
               <TabsTrigger value="account" className="flex items-center gap-2">
+                <User size={18} weight="bold" />
                 <span>Account</span>
               </TabsTrigger>
             </TabsList>
@@ -170,7 +171,7 @@ function App() {
                 activeTab === 'account' ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
-              <SignOut size={24} weight={activeTab === 'account' ? 'fill' : 'regular'} />
+              <User size={24} weight={activeTab === 'account' ? 'fill' : 'regular'} />
               <span className="text-xs font-medium">Account</span>
             </button>
           </div>

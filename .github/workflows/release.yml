@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for semantic-release
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p release-package
+          cp -r dist release-package/
+          cp server.ts release-package/
+          cp package.json release-package/
+          cp package-lock.json release-package/
+          cp -r node_modules release-package/
+          cp .env.example release-package/.env.template || echo "No .env.example found"
+          
+          # Create deployment README
+          cat > release-package/DEPLOYMENT.md << 'EOF'
+          # FitTrack Deployment Package
+          
+          ## Contents
+          - `dist/` - Built frontend application
+          - `server.ts` - Express backend server
+          - `package.json` - Dependencies manifest
+          - `node_modules/` - Production dependencies
+          - `.env.template` - Environment variables template
+          
+          ## Deployment Instructions
+          
+          1. Set environment variables:
+             - `PORT` - Server port (default: 3000)
+             - `JWT_SECRET` - Secret key for JWT tokens (REQUIRED - generate a secure random string)
+             - `NODE_ENV` - Set to "production"
+          
+          2. Start the server:
+             ```bash
+             NODE_ENV=production JWT_SECRET=your-secret-key node server.ts
+             ```
+          
+          3. The frontend will be served at http://localhost:3000
+          
+          ## Environment Setup
+          
+          Copy `.env.template` to `.env` and fill in the values:
+          ```bash
+          cp .env.template .env
+          # Edit .env with your configuration
+          ```
+          EOF
+
+      - name: Create release archive
+        run: |
+          tar -czf fittrack-release-${{ github.sha }}.tar.gz -C release-package .
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: fittrack-release-${{ github.sha }}.tar.gz
+          retention-days: 90
+
+  notify:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs: [release]
+    if: success()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get latest release
+        id: latest_release
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-release-yet")
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Comment on PRs included in release
+        if: steps.latest_release.outputs.tag != 'no-release-yet'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = '${{ steps.latest_release.outputs.tag }}';
+            console.log(`New release created: ${tag}`);
+            // Additional notification logic can be added here
